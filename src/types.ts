@@ -2,9 +2,6 @@
 
 export interface FindOptions {
 	maxResults?: number;
-	editDistance?: number;
-	glob?: string;
-	includeHidden?: boolean;
 }
 
 export interface FindResultItem {
@@ -27,7 +24,6 @@ export interface GrepOptions {
 	maxResults?: number;
 	regex?: boolean;
 	caseSensitive?: boolean;
-	glob?: string;
 	context?: number;
 }
 

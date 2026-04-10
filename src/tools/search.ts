@@ -72,6 +72,7 @@ export function createSearchTool(service: FffService): ToolDefinition<typeof Sea
 				return {
 					content: [{ type: "text" as const, text }],
 					details: {
+						// Safe: all fields are JSON-serializable primitives
 						mode: result.mode as unknown as ToolDetailValue,
 						findResults: result.findResults as unknown as ToolDetailValue,
 						grepResults: result.grepResults as unknown as ToolDetailValue,

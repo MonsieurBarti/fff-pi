@@ -59,13 +59,7 @@ describe("tff-fff_grep tool", () => {
 		const tool = createGrepTool(service);
 		const result = await tool.execute("call-1", { patterns: ["TODO"] });
 
-		expect(service.grep).toHaveBeenCalledWith(["TODO"], {
-			maxResults: undefined,
-			regex: undefined,
-			caseSensitive: undefined,
-			glob: undefined,
-			context: undefined,
-		});
+		expect(service.grep).toHaveBeenCalledWith(["TODO"], {});
 		expect(result.content[0]?.text).toContain("src/index.ts");
 		expect(result.content[0]?.text).toContain("TODO: fix this");
 	});

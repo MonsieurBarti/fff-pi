@@ -13,7 +13,6 @@ const GrepParams = Type.Object({
 	caseSensitive: Type.Optional(
 		Type.Boolean({ description: "Case sensitive search (default: smart case)" }),
 	),
-	glob: Type.Optional(Type.String({ description: "Filter by file glob" })),
 	context: Type.Optional(
 		Type.Number({ description: "Lines of context around match (default: 2)" }),
 	),
@@ -37,17 +36,10 @@ export function createGrepTool(service: FffService): ToolDefinition<typeof GrepP
 		async execute(_toolCallId, input): Promise<ToolExecuteResult> {
 			try {
 				const result = service.grep(input.patterns, {
-					maxResults: input.maxResults,
-					regex: input.regex,
-					caseSensitive: input.caseSensitive,
-					glob: input.glob,
-					context: input.context,
-				} as {
-					maxResults?: number;
-					regex?: boolean;
-					caseSensitive?: boolean;
-					glob?: string;
-					context?: number;
+					...(input.maxResults !== undefined ? { maxResults: input.maxResults } : {}),
+					...(input.regex !== undefined ? { regex: input.regex } : {}),
+					...(input.caseSensitive !== undefined ? { caseSensitive: input.caseSensitive } : {}),
+					...(input.context !== undefined ? { context: input.context } : {}),
 				});
 
 				if (result.items.length === 0) {
@@ -85,6 +77,7 @@ export function createGrepTool(service: FffService): ToolDefinition<typeof GrepP
 				return {
 					content: [{ type: "text" as const, text: lines.join("\n---\n") }],
 					details: {
+						// Safe: all fields are JSON-serializable primitives
 						items: result.items as unknown as ToolDetailValue,
 						totalMatched: result.totalMatched,
 						totalFilesSearched: result.totalFilesSearched,

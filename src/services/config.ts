@@ -40,17 +40,17 @@ export function loadConfig(cwd: string): FffConfig {
 
 	const configPath = join(fffDir, "config.json");
 	if (!existsSync(configPath)) {
-		return { ...DEFAULT_CONFIG };
+		return structuredClone(DEFAULT_CONFIG);
 	}
 
 	try {
 		const raw = readFileSync(configPath, "utf-8");
 		const parsed = JSON.parse(raw) as Record<string, unknown>;
 		return deepMerge(
-			DEFAULT_CONFIG as unknown as Record<string, unknown>,
+			structuredClone(DEFAULT_CONFIG) as unknown as Record<string, unknown>,
 			parsed,
 		) as unknown as FffConfig;
 	} catch {
-		return { ...DEFAULT_CONFIG };
+		return structuredClone(DEFAULT_CONFIG);
 	}
 }

@@ -6,9 +6,6 @@ import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types
 const FindParams = Type.Object({
 	query: Type.String({ description: "Fuzzy search query for file names/paths" }),
 	maxResults: Type.Optional(Type.Number({ description: "Maximum results (default: 20)" })),
-	editDistance: Type.Optional(Type.Number({ description: "Typo tolerance 0-3 (default: 2)" })),
-	glob: Type.Optional(Type.String({ description: 'Filter by glob pattern (e.g. "*.ts")' })),
-	includeHidden: Type.Optional(Type.Boolean({ description: "Include dotfiles (default: false)" })),
 });
 
 export function createFindTool(service: FffService): ToolDefinition<typeof FindParams> {
@@ -27,15 +24,7 @@ export function createFindTool(service: FffService): ToolDefinition<typeof FindP
 		async execute(_toolCallId, input): Promise<ToolExecuteResult> {
 			try {
 				const result = service.find(input.query, {
-					maxResults: input.maxResults,
-					editDistance: input.editDistance,
-					glob: input.glob,
-					includeHidden: input.includeHidden,
-				} as {
-					maxResults?: number;
-					editDistance?: number;
-					glob?: string;
-					includeHidden?: boolean;
+					...(input.maxResults !== undefined ? { maxResults: input.maxResults } : {}),
 				});
 
 				const lines = result.items.map(
@@ -54,6 +43,7 @@ export function createFindTool(service: FffService): ToolDefinition<typeof FindP
 						},
 					],
 					details: {
+						// Safe: all fields are JSON-serializable primitives
 						items: result.items as unknown as ToolDetailValue,
 						totalMatched: result.totalMatched,
 						totalFiles: result.totalFiles,

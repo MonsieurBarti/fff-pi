@@ -143,7 +143,7 @@ describe("FffService.find", () => {
 	});
 
 	test("delegates to FileFinder.fileSearch with mapped options", () => {
-		service.find("index", { maxResults: 10, editDistance: 1 });
+		service.find("index", { maxResults: 10 });
 
 		expect(fakeFileFinder.fileSearch).toHaveBeenCalledWith("index", {
 			pageSize: 10,
@@ -290,12 +290,29 @@ describe("FffService.grep", () => {
 		);
 	});
 
-	test("respects maxResults via maxMatchesPerFile", () => {
-		service.grep(["test"], { maxResults: 5 });
-		expect(fakeFileFinder.grep).toHaveBeenCalledWith(
-			"test",
-			expect.objectContaining({ maxMatchesPerFile: 5 }),
-		);
+	test("truncates items to maxResults", () => {
+		fakeFileFinder.grep.mockReturnValueOnce({
+			ok: true,
+			value: {
+				items: Array.from({ length: 10 }, (_, i) => ({
+					path: `/project/src/file${i}.ts`,
+					relativePath: `src/file${i}.ts`,
+					fileName: `file${i}.ts`,
+					lineNumber: i + 1,
+					lineContent: "test",
+					matchRanges: [[0, 4]],
+					contextBefore: [],
+					contextAfter: [],
+					totalFrecencyScore: 0,
+					gitStatus: "clean",
+				})),
+				totalMatched: 10,
+				totalFilesSearched: 10,
+				totalFiles: 10,
+			},
+		});
+		const result = service.grep(["test"], { maxResults: 5 });
+		expect(result.items).toHaveLength(5);
 	});
 
 	test("throws when FileFinder returns error", () => {

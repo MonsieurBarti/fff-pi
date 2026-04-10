@@ -43,9 +43,6 @@ describe("tff-fff_find tool", () => {
 		const valid = Value.Check(tool.parameters, {
 			query: "index",
 			maxResults: 10,
-			editDistance: 1,
-			glob: "*.ts",
-			includeHidden: true,
 		});
 		expect(valid).toBe(true);
 	});
@@ -61,12 +58,7 @@ describe("tff-fff_find tool", () => {
 		const tool = createFindTool(service);
 		const result = await tool.execute("call-1", { query: "index" });
 
-		expect(service.find).toHaveBeenCalledWith("index", {
-			maxResults: undefined,
-			editDistance: undefined,
-			glob: undefined,
-			includeHidden: undefined,
-		});
+		expect(service.find).toHaveBeenCalledWith("index", {});
 		expect(result.content[0]?.text).toContain("src/index.ts");
 		expect(result.details).toEqual(expect.objectContaining({ totalMatched: 1, totalFiles: 50 }));
 	});

@@ -164,13 +164,12 @@ export class FffService {
 
 		const contextLines = opts.context ?? this.config.search.defaultContextLines;
 		const smartCase = opts.caseSensitive === undefined ? true : !opts.caseSensitive;
-		const maxMatchesPerFile = opts.maxResults;
+		const maxResults = opts.maxResults;
 
 		const sharedOpts = {
 			smartCase,
 			beforeContext: contextLines,
 			afterContext: contextLines,
-			...(maxMatchesPerFile !== undefined ? { maxMatchesPerFile } : {}),
 		};
 
 		let raw: import("@ff-labs/fff-node").Result<FffGrepResult>;
@@ -192,7 +191,8 @@ export class FffService {
 			throw new Error(raw.error);
 		}
 
-		const { items, totalMatched, totalFilesSearched, totalFiles } = raw.value;
+		const { items: rawItems, totalMatched, totalFilesSearched, totalFiles } = raw.value;
+		const items = maxResults !== undefined ? rawItems.slice(0, maxResults) : rawItems;
 
 		return {
 			items: items.map((match) => ({
