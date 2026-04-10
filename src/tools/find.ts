@@ -5,7 +5,9 @@ import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types
 
 const FindParams = Type.Object({
 	query: Type.String({ description: "Fuzzy search query for file names/paths" }),
-	maxResults: Type.Optional(Type.Number({ description: "Maximum results (default: 20)" })),
+	maxResults: Type.Optional(
+		Type.Number({ description: "Maximum results (default: 20)", minimum: 1, maximum: 1000 }),
+	),
 });
 
 export function createFindTool(service: FffService): ToolDefinition<typeof FindParams> {

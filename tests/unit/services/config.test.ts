@@ -34,7 +34,7 @@ describe("loadConfig", () => {
 
 		const config = loadConfig(tmpCwd);
 		expect(config.search.defaultMaxResults).toBe(50);
-		expect(config.search.defaultEditDistance).toBe(DEFAULT_CONFIG.search.defaultEditDistance);
+		expect(config.search.defaultContextLines).toBe(DEFAULT_CONFIG.search.defaultContextLines);
 		expect(config.frecency).toEqual(DEFAULT_CONFIG.frecency);
 	});
 

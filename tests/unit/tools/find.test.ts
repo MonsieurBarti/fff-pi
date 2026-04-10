@@ -63,6 +63,27 @@ describe("tff-fff_find tool", () => {
 		expect(result.details).toEqual(expect.objectContaining({ totalMatched: 1, totalFiles: 50 }));
 	});
 
+	test("execute passes maxResults to service.find when provided", async () => {
+		const service = createMockService();
+		const tool = createFindTool(service);
+		await tool.execute("call-1", { query: "index", maxResults: 5 });
+
+		expect(service.find).toHaveBeenCalledWith("index", { maxResults: 5 });
+	});
+
+	test("execute returns 'no files found' message when items is empty", async () => {
+		const service = createMockService();
+		vi.mocked(service.find).mockReturnValue({
+			items: [],
+			totalMatched: 0,
+			totalFiles: 50,
+		});
+		const tool = createFindTool(service);
+		const result = await tool.execute("call-1", { query: "nonexistent" });
+
+		expect(result.content[0]?.text).toContain('No files found matching "nonexistent"');
+	});
+
 	test("execute returns error content on service failure", async () => {
 		const service = createMockService();
 		vi.mocked(service.find).mockImplementation(() => {

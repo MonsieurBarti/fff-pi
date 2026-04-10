@@ -103,6 +103,81 @@ describe("tff-fff_search tool", () => {
 		expect(result.details).toEqual(expect.objectContaining({ mode: "both" }));
 	});
 
+	test("execute handles grep-only mode", async () => {
+		const service = createMockService();
+		vi.mocked(service.search).mockReturnValue({
+			mode: "grep",
+			grepResults: {
+				items: [
+					{
+						path: "/p/src/main.ts",
+						relativePath: "src/main.ts",
+						fileName: "main.ts",
+						lineNumber: 5,
+						lineContent: "const foo = 1;",
+						matchRanges: [[6, 9]],
+						frecencyScore: 0,
+						gitStatus: "clean",
+					},
+				],
+				totalMatched: 1,
+				totalFilesSearched: 10,
+				totalFiles: 50,
+			},
+		});
+		const tool = createSearchTool(service);
+		const result = await tool.execute("call-1", { query: "const foo" });
+
+		expect(result.content[0]?.text).toContain("src/main.ts");
+		expect(result.details).toEqual(expect.objectContaining({ mode: "grep" }));
+	});
+
+	test("execute returns no-results message when find mode returns empty items", async () => {
+		const service = createMockService();
+		vi.mocked(service.search).mockReturnValue({
+			mode: "find",
+			findResults: {
+				items: [],
+				totalMatched: 0,
+				totalFiles: 50,
+			},
+		});
+		const tool = createSearchTool(service);
+		const result = await tool.execute("call-1", { query: "nope.ts" });
+
+		expect(result.content[0]?.text).toContain('No files found matching "nope.ts"');
+	});
+
+	test("execute returns no-results message when grep mode returns empty items", async () => {
+		const service = createMockService();
+		vi.mocked(service.search).mockReturnValue({
+			mode: "grep",
+			grepResults: {
+				items: [],
+				totalMatched: 0,
+				totalFilesSearched: 5,
+				totalFiles: 50,
+			},
+		});
+		const tool = createSearchTool(service);
+		const result = await tool.execute("call-1", { query: "nothing here" });
+
+		expect(result.content[0]?.text).toContain('No content matches for "nothing here"');
+	});
+
+	test("execute returns no-results message when both mode returns empty results", async () => {
+		const service = createMockService();
+		vi.mocked(service.search).mockReturnValue({
+			mode: "both",
+			findResults: { items: [], totalMatched: 0, totalFiles: 50 },
+			grepResults: { items: [], totalMatched: 0, totalFilesSearched: 5, totalFiles: 50 },
+		});
+		const tool = createSearchTool(service);
+		const result = await tool.execute("call-1", { query: "handler" });
+
+		expect(result.content[0]?.text).toContain('No results found for "handler"');
+	});
+
 	test("execute returns error on failure", async () => {
 		const service = createMockService();
 		vi.mocked(service.search).mockImplementation(() => {

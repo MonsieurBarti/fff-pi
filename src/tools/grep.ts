@@ -8,13 +8,19 @@ const GrepParams = Type.Object({
 		minItems: 1,
 		description: "One or more patterns to search for (OR logic when multiple)",
 	}),
-	maxResults: Type.Optional(Type.Number({ description: "Maximum results (default: 30)" })),
+	maxResults: Type.Optional(
+		Type.Number({ description: "Maximum results (default: 30)", minimum: 1, maximum: 1000 }),
+	),
 	regex: Type.Optional(Type.Boolean({ description: "Treat patterns as regex (default: false)" })),
 	caseSensitive: Type.Optional(
 		Type.Boolean({ description: "Case sensitive search (default: smart case)" }),
 	),
 	context: Type.Optional(
-		Type.Number({ description: "Lines of context around match (default: 2)" }),
+		Type.Number({
+			description: "Lines of context around match (default: 2)",
+			minimum: 0,
+			maximum: 20,
+		}),
 	),
 });
 

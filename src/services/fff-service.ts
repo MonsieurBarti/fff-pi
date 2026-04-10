@@ -36,7 +36,7 @@ export function detectSearchMode(query: string): "find" | "grep" | "both" {
 
 export class FffService {
 	private finder: FileFinder | null = null;
-	private config: FffConfig = DEFAULT_CONFIG;
+	private config: FffConfig = structuredClone(DEFAULT_CONFIG);
 	private cwd = "";
 	private lastGitRefresh = 0;
 

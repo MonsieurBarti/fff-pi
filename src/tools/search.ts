@@ -6,7 +6,9 @@ import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types
 
 const SearchParams = Type.Object({
 	query: Type.String({ description: "Natural language query or pattern" }),
-	maxResults: Type.Optional(Type.Number({ description: "Maximum results (default: 20)" })),
+	maxResults: Type.Optional(
+		Type.Number({ description: "Maximum results (default: 20)", minimum: 1, maximum: 1000 }),
+	),
 });
 
 function formatFindResults(results: FindResult): string {

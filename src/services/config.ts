@@ -3,12 +3,15 @@ import { join } from "node:path";
 
 import { DEFAULT_CONFIG, type FffConfig } from "../types";
 
+const FORBIDDEN_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 function deepMerge(
 	target: Record<string, unknown>,
 	source: Record<string, unknown>,
 ): Record<string, unknown> {
 	const result = { ...target };
 	for (const key of Object.keys(source)) {
+		if (FORBIDDEN_KEYS.has(key)) continue;
 		const targetVal = target[key];
 		const sourceVal = source[key];
 		if (

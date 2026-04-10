@@ -73,7 +73,6 @@ export interface IndexStatus {
 export interface FffConfig {
 	search: {
 		defaultMaxResults: number;
-		defaultEditDistance: number;
 		defaultContextLines: number;
 	};
 	frecency: {
@@ -87,7 +86,6 @@ export interface FffConfig {
 export const DEFAULT_CONFIG: FffConfig = {
 	search: {
 		defaultMaxResults: 20,
-		defaultEditDistance: 2,
 		defaultContextLines: 2,
 	},
 	frecency: {

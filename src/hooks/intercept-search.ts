@@ -61,6 +61,10 @@ export function createInterceptSearchHook(service: FffService): HookDefinition {
 				}
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
+				// If service not yet initialized, fall through to PI's built-in handler
+				if (message.includes("not initialized")) {
+					return undefined;
+				}
 				return {
 					content: [{ type: "text", text: `Search interception error: ${message}` }],
 					details: { error: message },

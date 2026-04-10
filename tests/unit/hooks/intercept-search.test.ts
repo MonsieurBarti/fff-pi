@@ -91,15 +91,27 @@ describe("intercept-search hook", () => {
 		expect(result).toBeUndefined();
 	});
 
-	test("returns error content when service throws", () => {
+	test("returns error content when service throws a non-initialization error", () => {
 		const service = createMockService();
 		vi.mocked(service.find).mockImplementation(() => {
-			throw new Error("not ready");
+			throw new Error("disk read failed");
 		});
 		const hook = createInterceptSearchHook(service);
 		const event = { toolName: "glob", args: { pattern: "*.ts" } };
 
 		const result = hook.handler(event, {}) as { content: Array<{ text: string }> };
-		expect(result.content[0]?.text).toContain("not ready");
+		expect(result.content[0]?.text).toContain("disk read failed");
+	});
+
+	test("returns undefined when service throws 'not initialized' (falls through to PI handler)", () => {
+		const service = createMockService();
+		vi.mocked(service.find).mockImplementation(() => {
+			throw new Error("FffService not initialized. Call initialize() first.");
+		});
+		const hook = createInterceptSearchHook(service);
+		const event = { toolName: "glob", args: { pattern: "*.ts" } };
+
+		const result = hook.handler(event, {});
+		expect(result).toBeUndefined();
 	});
 });

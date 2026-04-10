@@ -48,6 +48,49 @@ describe("/fff-status command", () => {
 		expect(message).toContain("git");
 	});
 
+	test("shows scanning status when isScanning is true", async () => {
+		const service = createMockService();
+		vi.mocked(service.getStatus).mockReturnValue({
+			initialized: true,
+			indexedFiles: 500,
+			isScanning: true,
+			basePath: "/project",
+			frecencyEnabled: true,
+			gitAvailable: true,
+			gitRepositoryFound: true,
+			version: "0.5.1",
+		});
+		const ctx = createMockCtx();
+		const cmd = createStatusCommand(service);
+
+		await cmd.handler("", ctx);
+
+		const message = vi.mocked(ctx.ui.notify).mock.calls[0]?.[0] as string;
+		expect(message).toContain("yes");
+	});
+
+	test("shows 'available, no repo' when git available but no repo found", async () => {
+		const service = createMockService();
+		vi.mocked(service.getStatus).mockReturnValue({
+			initialized: true,
+			indexedFiles: 100,
+			isScanning: false,
+			basePath: "/project",
+			frecencyEnabled: false,
+			gitAvailable: true,
+			gitRepositoryFound: false,
+			version: "0.5.0",
+		});
+		const ctx = createMockCtx();
+		const cmd = createStatusCommand(service);
+
+		await cmd.handler("", ctx);
+
+		const message = vi.mocked(ctx.ui.notify).mock.calls[0]?.[0] as string;
+		expect(message).toContain("available, no repo");
+		expect(message).toContain("disabled");
+	});
+
 	test("shows uninitialized status", async () => {
 		const service = createMockService();
 		vi.mocked(service.getStatus).mockReturnValue({

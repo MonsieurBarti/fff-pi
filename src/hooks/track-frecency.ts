@@ -12,7 +12,12 @@ interface ToolResultEvent {
 }
 
 function isToolResultEvent(event: unknown): event is ToolResultEvent {
-	return typeof event === "object" && event !== null && "toolName" in event;
+	return (
+		typeof event === "object" &&
+		event !== null &&
+		"toolName" in event &&
+		typeof (event as ToolResultEvent).toolName === "string"
+	);
 }
 
 const FILE_PATH_TOOLS = new Set(["read", "write", "edit"]);
