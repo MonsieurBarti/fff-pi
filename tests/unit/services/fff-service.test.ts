@@ -109,3 +109,75 @@ describe("FffService lifecycle", () => {
 		expect(status.initialized).toBe(false);
 	});
 });
+
+describe("FffService.find", () => {
+	let tmpCwd: string;
+	let service: FffService;
+
+	beforeEach(async () => {
+		tmpCwd = mkdtempSync(join(tmpdir(), "fff-find-"));
+		service = new FffService();
+		vi.clearAllMocks();
+		fakeFileFinder.fileSearch.mockReturnValue({
+			ok: true,
+			value: {
+				items: [
+					{
+						path: "/project/src/index.ts",
+						relativePath: "src/index.ts",
+						fileName: "index.ts",
+						totalFrecencyScore: 0,
+						gitStatus: "clean",
+					},
+				],
+				scores: [{ total: 100, matchType: "fuzzy" }],
+				totalMatched: 1,
+				totalFiles: 50,
+			},
+		});
+		await service.initialize(tmpCwd);
+	});
+
+	afterEach(() => {
+		rmSync(tmpCwd, { recursive: true, force: true });
+	});
+
+	test("delegates to FileFinder.fileSearch with mapped options", () => {
+		service.find("index", { maxResults: 10, editDistance: 1 });
+
+		expect(fakeFileFinder.fileSearch).toHaveBeenCalledWith("index", {
+			pageSize: 10,
+		});
+	});
+
+	test("maps FileItem results to FindResultItem", () => {
+		const result = service.find("index");
+
+		expect(result.items).toHaveLength(1);
+		expect(result.items[0]).toEqual(
+			expect.objectContaining({
+				relativePath: "src/index.ts",
+				fileName: "index.ts",
+				gitStatus: "clean",
+			}),
+		);
+	});
+
+	test("returns score and frecency from fff-node", () => {
+		const result = service.find("index");
+		// biome-ignore lint/style/noNonNullAssertion: test assertion on known mock data
+		expect(result.items[0]!.score).toBe(100);
+		// biome-ignore lint/style/noNonNullAssertion: test assertion on known mock data
+		expect(result.items[0]!.frecencyScore).toBe(0);
+	});
+
+	test("throws when FileFinder returns error", () => {
+		fakeFileFinder.fileSearch.mockReturnValueOnce({ ok: false, error: "search failed" });
+		expect(() => service.find("test")).toThrow("search failed");
+	});
+
+	test("throws when service not initialized", () => {
+		const uninitService = new FffService();
+		expect(() => uninitService.find("test")).toThrow("not initialized");
+	});
+});

@@ -2,7 +2,7 @@ import { join } from "node:path";
 
 import { FileFinder } from "@ff-labs/fff-node";
 
-import type { FffConfig, IndexStatus } from "../types";
+import type { FffConfig, FindOptions, FindResult, IndexStatus } from "../types";
 import { DEFAULT_CONFIG } from "../types";
 import { getFffDir, loadConfig } from "./config";
 
@@ -98,6 +98,36 @@ export class FffService {
 			this.finder.refreshGitStatus();
 			this.lastGitRefresh = now;
 		}
+	}
+
+	find(query: string, opts: FindOptions = {}): FindResult {
+		this.ensureInitialized();
+
+		const maxResults = opts.maxResults ?? this.config.search.defaultMaxResults;
+		const finder = this.finder as FileFinder;
+		const result = finder.fileSearch(query, {
+			pageSize: maxResults,
+		});
+
+		if (!result.ok) {
+			throw new Error(result.error);
+		}
+
+		const { items, scores, totalMatched, totalFiles } = result.value;
+
+		return {
+			items: items.map((item, i) => ({
+				path: item.path,
+				relativePath: item.relativePath,
+				fileName: item.fileName,
+				score: scores[i]?.total ?? 0,
+				frecencyScore: item.totalFrecencyScore,
+				gitStatus: item.gitStatus,
+				matchType: scores[i]?.matchType ?? "fuzzy",
+			})),
+			totalMatched,
+			totalFiles,
+		};
 	}
 
 	trackFileAccess(query: string, filepath: string): void {
