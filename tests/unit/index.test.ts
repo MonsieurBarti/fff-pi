@@ -1,24 +1,55 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+// vi.hoisted so the factory is available inside the hoisted vi.mock block
+const { fakeFileFinder } = vi.hoisted(() => {
+	const finder = {
+		fileSearch: vi.fn(),
+		grep: vi.fn(),
+		multiGrep: vi.fn(),
+		scanFiles: vi.fn().mockReturnValue({ ok: true, value: undefined }),
+		waitForScan: vi.fn().mockResolvedValue({ ok: true, value: true }),
+		reindex: vi.fn().mockReturnValue({ ok: true, value: undefined }),
+		refreshGitStatus: vi.fn().mockReturnValue({ ok: true, value: 0 }),
+		trackQuery: vi.fn().mockReturnValue({ ok: true, value: true }),
+		healthCheck: vi.fn().mockReturnValue({
+			ok: true,
+			value: {
+				version: "0.5.1",
+				git: { available: true, repositoryFound: true, libgit2Version: "1.8.0" },
+				filePicker: { initialized: true, basePath: "/project", indexedFiles: 100 },
+				frecency: { initialized: true },
+				queryTracker: { initialized: true },
+			},
+		}),
+		getScanProgress: vi.fn().mockReturnValue({
+			ok: true,
+			value: { scannedFilesCount: 100, isScanning: false },
+		}),
+		isScanning: vi.fn().mockReturnValue(false),
+		destroy: vi.fn(),
+		isDestroyed: false,
+	};
+	return { fakeFileFinder: finder };
+});
+
+vi.mock("@ff-labs/fff-node", () => ({
+	FileFinder: {
+		create: vi.fn().mockReturnValue({ ok: true, value: fakeFileFinder }),
+		isAvailable: vi.fn().mockReturnValue(true),
+	},
+}));
 
 import fffExtension, { type PiExtensionApi } from "../../src/index";
 
 interface RegisteredTool {
 	name: string;
-	label: string;
-	description: string;
-	promptSnippet: string;
-	promptGuidelines: string[];
-	parameters: unknown;
-	execute(toolCallId: string, input: unknown): Promise<unknown>;
 }
 
 interface RegisteredCommand {
 	name: string;
-	description?: string;
-	handler(args: string, ctx: unknown): Promise<void>;
 }
 
 interface CapturedHandler {
@@ -41,25 +72,10 @@ function createCapturingPiApi(cwd: string): {
 			handlers.push({ event, handler });
 		},
 		registerTool(tool) {
-			tools.push({
-				name: tool.name,
-				label: tool.label,
-				description: tool.description,
-				promptSnippet: tool.promptSnippet,
-				promptGuidelines: tool.promptGuidelines,
-				parameters: tool.parameters,
-				execute: tool.execute,
-			});
+			tools.push({ name: tool.name });
 		},
-		registerCommand(name, config) {
-			const entry: RegisteredCommand = {
-				name,
-				handler: config.handler,
-			};
-			if (config.description !== undefined) {
-				entry.description = config.description;
-			}
-			commands.push(entry);
+		registerCommand(name, _config) {
+			commands.push({ name });
 		},
 	};
 	return { api, tools, commands, handlers };
@@ -70,6 +86,7 @@ describe("extension entry point", () => {
 
 	beforeEach(() => {
 		tmpCwd = mkdtempSync(join(tmpdir(), "fff-entry-"));
+		vi.clearAllMocks();
 	});
 
 	afterEach(() => {
@@ -84,17 +101,25 @@ describe("extension entry point", () => {
 		const { api, tools } = createCapturingPiApi(tmpCwd);
 		fffExtension(api);
 		expect(tools).toHaveLength(3);
+		expect(tools.map((t) => t.name)).toEqual(["tff-fff_find", "tff-fff_grep", "tff-fff_search"]);
 	});
 
 	test("registers 2 commands", () => {
 		const { api, commands } = createCapturingPiApi(tmpCwd);
 		fffExtension(api);
 		expect(commands).toHaveLength(2);
+		expect(commands.map((c) => c.name)).toEqual(["fff-status", "fff-reindex"]);
 	});
 
-	test("subscribes to 0 lifecycle events", () => {
+	test("subscribes to lifecycle events", () => {
 		const { api, handlers } = createCapturingPiApi(tmpCwd);
 		fffExtension(api);
-		expect(handlers).toHaveLength(0);
+
+		const events = handlers.map((h) => h.event);
+		expect(events).toContain("session_start");
+		expect(events).toContain("session_shutdown");
+		expect(events).toContain("tool_call");
+		expect(events).toContain("tool_result");
+		expect(events).toContain("before_agent_start");
 	});
 });
