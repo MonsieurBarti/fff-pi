@@ -1,8 +1,16 @@
 import { join } from "node:path";
 
+import type { GrepResult as FffGrepResult } from "@ff-labs/fff-node";
 import { FileFinder } from "@ff-labs/fff-node";
 
-import type { FffConfig, FindOptions, FindResult, IndexStatus } from "../types";
+import type {
+	FffConfig,
+	FindOptions,
+	FindResult,
+	GrepOptions,
+	GrepResult,
+	IndexStatus,
+} from "../types";
 import { DEFAULT_CONFIG } from "../types";
 import { getFffDir, loadConfig } from "./config";
 
@@ -126,6 +134,61 @@ export class FffService {
 				matchType: scores[i]?.matchType ?? "fuzzy",
 			})),
 			totalMatched,
+			totalFiles,
+		};
+	}
+
+	grep(patterns: string[], opts: GrepOptions = {}): GrepResult {
+		this.ensureInitialized();
+		const finder = this.finder as FileFinder;
+
+		const contextLines = opts.context ?? this.config.search.defaultContextLines;
+		const smartCase = opts.caseSensitive === undefined ? true : !opts.caseSensitive;
+		const maxMatchesPerFile = opts.maxResults;
+
+		const sharedOpts = {
+			smartCase,
+			beforeContext: contextLines,
+			afterContext: contextLines,
+			...(maxMatchesPerFile !== undefined ? { maxMatchesPerFile } : {}),
+		};
+
+		let raw: import("@ff-labs/fff-node").Result<FffGrepResult>;
+
+		if (patterns.length === 1) {
+			// biome-ignore lint/style/noNonNullAssertion: length === 1 guarantees index 0 exists
+			raw = finder.grep(patterns[0]!, {
+				mode: opts.regex ? "regex" : "plain",
+				...sharedOpts,
+			});
+		} else {
+			raw = finder.multiGrep({
+				patterns,
+				...sharedOpts,
+			});
+		}
+
+		if (!raw.ok) {
+			throw new Error(raw.error);
+		}
+
+		const { items, totalMatched, totalFilesSearched, totalFiles } = raw.value;
+
+		return {
+			items: items.map((match) => ({
+				path: match.path,
+				relativePath: match.relativePath,
+				fileName: match.fileName,
+				lineNumber: match.lineNumber,
+				lineContent: match.lineContent,
+				matchRanges: match.matchRanges,
+				...(match.contextBefore !== undefined ? { contextBefore: match.contextBefore } : {}),
+				...(match.contextAfter !== undefined ? { contextAfter: match.contextAfter } : {}),
+				frecencyScore: match.totalFrecencyScore,
+				gitStatus: match.gitStatus,
+			})),
+			totalMatched,
+			totalFilesSearched,
 			totalFiles,
 		};
 	}

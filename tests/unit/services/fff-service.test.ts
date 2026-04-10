@@ -181,3 +181,125 @@ describe("FffService.find", () => {
 		expect(() => uninitService.find("test")).toThrow("not initialized");
 	});
 });
+
+describe("FffService.grep", () => {
+	let tmpCwd: string;
+	let service: FffService;
+
+	beforeEach(async () => {
+		tmpCwd = mkdtempSync(join(tmpdir(), "fff-grep-"));
+		service = new FffService();
+		vi.clearAllMocks();
+		fakeFileFinder.grep.mockReturnValue({
+			ok: true,
+			value: {
+				items: [
+					{
+						path: "/project/src/index.ts",
+						relativePath: "src/index.ts",
+						fileName: "index.ts",
+						lineNumber: 10,
+						lineContent: 'const result = "hello";',
+						matchRanges: [[16, 21]],
+						contextBefore: [],
+						contextAfter: [],
+						totalFrecencyScore: 0,
+						gitStatus: "clean",
+					},
+				],
+				totalMatched: 1,
+				totalFilesSearched: 50,
+				totalFiles: 50,
+			},
+		});
+		fakeFileFinder.multiGrep.mockReturnValue({
+			ok: true,
+			value: {
+				items: [],
+				totalMatched: 0,
+				totalFilesSearched: 0,
+				totalFiles: 0,
+			},
+		});
+		await service.initialize(tmpCwd);
+	});
+
+	afterEach(() => {
+		rmSync(tmpCwd, { recursive: true, force: true });
+	});
+
+	test("single pattern delegates to FileFinder.grep", () => {
+		service.grep(["TODO"]);
+
+		expect(fakeFileFinder.grep).toHaveBeenCalledWith("TODO", {
+			mode: "plain",
+			smartCase: true,
+			beforeContext: 2,
+			afterContext: 2,
+		});
+	});
+
+	test("multiple patterns delegates to FileFinder.multiGrep", () => {
+		service.grep(["TODO", "FIXME"]);
+
+		expect(fakeFileFinder.multiGrep).toHaveBeenCalledWith({
+			patterns: ["TODO", "FIXME"],
+			smartCase: true,
+			beforeContext: 2,
+			afterContext: 2,
+		});
+	});
+
+	test("regex option sets mode to regex", () => {
+		service.grep(["foo.*bar"], { regex: true });
+
+		expect(fakeFileFinder.grep).toHaveBeenCalledWith(
+			"foo.*bar",
+			expect.objectContaining({ mode: "regex" }),
+		);
+	});
+
+	test("caseSensitive false sets smartCase true", () => {
+		service.grep(["test"], { caseSensitive: false });
+		expect(fakeFileFinder.grep).toHaveBeenCalledWith(
+			"test",
+			expect.objectContaining({ smartCase: true }),
+		);
+	});
+
+	test("caseSensitive true sets smartCase false", () => {
+		service.grep(["test"], { caseSensitive: true });
+		expect(fakeFileFinder.grep).toHaveBeenCalledWith(
+			"test",
+			expect.objectContaining({ smartCase: false }),
+		);
+	});
+
+	test("maps GrepMatch results to GrepResultItem", () => {
+		const result = service.grep(["hello"]);
+
+		expect(result.items).toHaveLength(1);
+		expect(result.items[0]).toEqual(
+			expect.objectContaining({
+				relativePath: "src/index.ts",
+				lineNumber: 10,
+				lineContent: 'const result = "hello";',
+				matchRanges: [[16, 21]],
+				gitStatus: "clean",
+			}),
+		);
+	});
+
+	test("respects maxResults via maxMatchesPerFile", () => {
+		service.grep(["test"], { maxResults: 5 });
+		expect(fakeFileFinder.grep).toHaveBeenCalledWith(
+			"test",
+			expect.objectContaining({ maxMatchesPerFile: 5 }),
+		);
+	});
+
+	test("throws when FileFinder returns error", () => {
+		fakeFileFinder.grep.mockReturnValueOnce({ ok: false, error: "grep failed" });
+		expect(() => service.grep(["test"])).toThrow("grep failed");
+	});
+});
