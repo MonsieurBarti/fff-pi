@@ -112,7 +112,8 @@ export default function fffExtension(pi: PiExtensionApi): void {
 		// eslint-disable-line @typescript-eslint/no-explicit-any
 		pi.registerTool(wrapTool(def));
 	}
-	for (const def of createAllCommands()) {
+	// biome-ignore lint/suspicious/noExplicitAny: temporary until Task 16 wires the real service
+	for (const def of createAllCommands(undefined as any)) {
 		pi.registerCommand(def.name, wrapCommand(def));
 	}
 }

@@ -86,10 +86,10 @@ describe("extension entry point", () => {
 		expect(tools).toHaveLength(3);
 	});
 
-	test("registers 0 commands", () => {
+	test("registers 2 commands", () => {
 		const { api, commands } = createCapturingPiApi(tmpCwd);
 		fffExtension(api);
-		expect(commands).toHaveLength(0);
+		expect(commands).toHaveLength(2);
 	});
 
 	test("subscribes to 0 lifecycle events", () => {
