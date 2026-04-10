@@ -106,7 +106,10 @@ function wrapCommand(def: CommandDefinition): PiRegisteredCommand {
 
 export default function fffExtension(pi: PiExtensionApi): void {
 	// Register all tools + commands.
-	for (const def of createAllTools()) {
+	// TODO(Task 16): pass initialized FffService instance here
+	// biome-ignore lint/suspicious/noExplicitAny: temporary until Task 16 wires the real service
+	for (const def of createAllTools(undefined as any)) {
+		// eslint-disable-line @typescript-eslint/no-explicit-any
 		pi.registerTool(wrapTool(def));
 	}
 	for (const def of createAllCommands()) {

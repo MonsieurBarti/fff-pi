@@ -80,10 +80,10 @@ describe("extension entry point", () => {
 		expect(typeof fffExtension).toBe("function");
 	});
 
-	test("registers 0 tools", () => {
+	test("registers 3 tools", () => {
 		const { api, tools } = createCapturingPiApi(tmpCwd);
 		fffExtension(api);
-		expect(tools).toHaveLength(0);
+		expect(tools).toHaveLength(3);
 	});
 
 	test("registers 0 commands", () => {
