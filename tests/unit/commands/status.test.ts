@@ -41,7 +41,7 @@ describe("/fff-status command", () => {
 		await cmd.handler("", ctx);
 
 		expect(ctx.ui.notify).toHaveBeenCalled();
-		const message = vi.mocked(ctx.ui.notify).mock.calls[0]![0]!;
+		const message = vi.mocked(ctx.ui.notify).mock.calls[0]?.[0] as string;
 		expect(message).toContain("1234");
 		expect(message).toContain("0.5.1");
 		expect(message).toContain("frecency");
@@ -65,7 +65,7 @@ describe("/fff-status command", () => {
 
 		await cmd.handler("", ctx);
 
-		const message = vi.mocked(ctx.ui.notify).mock.calls[0]![0]!;
+		const message = vi.mocked(ctx.ui.notify).mock.calls[0]?.[0] as string;
 		expect(message).toContain("not initialized");
 	});
 });
