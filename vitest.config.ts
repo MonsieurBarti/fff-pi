@@ -16,6 +16,8 @@ export default defineConfig({
 				"tests/**/*.test.ts",
 				"tests/fixtures/**",
 				"**/*.d.ts",
+				"vitest.config.ts",
+				"commitlint.config.cjs",
 			],
 			thresholds: {
 				lines: 85,

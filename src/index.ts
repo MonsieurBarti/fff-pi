@@ -3,6 +3,8 @@ import { Value } from "@sinclair/typebox/value";
 
 import type { CommandContext, CommandDefinition } from "./commands";
 import { createAllCommands } from "./commands";
+import { createAllHooks } from "./hooks";
+import { FffService } from "./services/fff-service";
 import type { ToolDefinition } from "./tools";
 import { createAllTools } from "./tools";
 
@@ -105,11 +107,28 @@ function wrapCommand(def: CommandDefinition): PiRegisteredCommand {
 // ---------------------------------------------------------------------------
 
 export default function fffExtension(pi: PiExtensionApi): void {
+	const service = new FffService();
+
 	// Register all tools + commands.
-	for (const def of createAllTools()) {
+	for (const def of createAllTools(service)) {
 		pi.registerTool(wrapTool(def));
 	}
-	for (const def of createAllCommands()) {
+	for (const def of createAllCommands(service)) {
 		pi.registerCommand(def.name, wrapCommand(def));
 	}
+
+	// Register hooks.
+	for (const hook of createAllHooks(service)) {
+		pi.on(hook.event, hook.handler);
+	}
+
+	// Lifecycle: initialize on session_start, cleanup on session_shutdown.
+	pi.on("session_start", async (_event, ctx) => {
+		const cwd = (ctx as { cwd?: string })?.cwd ?? pi.cwd ?? process.cwd();
+		await service.initialize(cwd);
+	});
+
+	pi.on("session_shutdown", async () => {
+		await service.shutdown();
+	});
 }
