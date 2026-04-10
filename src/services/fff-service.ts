@@ -10,9 +10,29 @@ import type {
 	GrepOptions,
 	GrepResult,
 	IndexStatus,
+	SearchOptions,
+	SearchResult,
 } from "../types";
 import { DEFAULT_CONFIG } from "../types";
 import { getFffDir, loadConfig } from "./config";
+
+const FILE_EXTENSION_PATTERN = /\.\w{1,10}$/;
+const GLOB_CHARS = /[*?]/;
+const REGEX_META_CHARS = /[[\]()|\\^${}]/;
+
+export function detectSearchMode(query: string): "find" | "grep" | "both" {
+	// File path signal: contains /, has a file extension, or glob chars
+	if (query.includes("/")) return "find";
+	if (FILE_EXTENSION_PATTERN.test(query)) return "find";
+	if (GLOB_CHARS.test(query)) return "find";
+
+	// Content signal: regex metacharacters, whitespace, or pipe
+	if (REGEX_META_CHARS.test(query)) return "grep";
+	if (/\s/.test(query)) return "grep";
+
+	// Ambiguous single word — run both
+	return "both";
+}
 
 export class FffService {
 	private finder: FileFinder | null = null;
@@ -190,6 +210,34 @@ export class FffService {
 			totalMatched,
 			totalFilesSearched,
 			totalFiles,
+		};
+	}
+
+	search(query: string, opts: SearchOptions = {}): SearchResult {
+		this.ensureInitialized();
+
+		const maxResults = opts.maxResults ?? this.config.search.defaultMaxResults;
+		const mode = detectSearchMode(query);
+
+		if (mode === "find") {
+			return {
+				mode: "find",
+				findResults: this.find(query, { maxResults }),
+			};
+		}
+
+		if (mode === "grep") {
+			return {
+				mode: "grep",
+				grepResults: this.grep([query], { maxResults }),
+			};
+		}
+
+		// Both: run find and grep, return merged results
+		return {
+			mode: "both",
+			findResults: this.find(query, { maxResults }),
+			grepResults: this.grep([query], { maxResults }),
 		};
 	}
 
