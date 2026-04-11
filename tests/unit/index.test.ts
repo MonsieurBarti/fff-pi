@@ -77,6 +77,7 @@ function createCapturingPiApi(cwd: string): {
 		registerCommand(name, _config) {
 			commands.push({ name });
 		},
+		exec: async () => ({ stdout: "", code: 0 }),
 	};
 	return { api, tools, commands, handlers };
 }

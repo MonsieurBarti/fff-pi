@@ -47,6 +47,7 @@ export function createFakePiApi(cwd: string): FakePiApi {
 		registerCommand(name, config) {
 			commands.push({ name, handler: config.handler });
 		},
+		exec: async () => ({ stdout: "", code: 0 }),
 	};
 
 	return {

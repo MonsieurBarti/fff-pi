@@ -7,6 +7,7 @@ import { createAllHooks } from "./hooks";
 import { FffService } from "./services/fff-service";
 import type { ToolDefinition } from "./tools";
 import { createAllTools } from "./tools";
+import { checkForUpdates } from "./update-check.js";
 
 // ---------------------------------------------------------------------------
 // Structural PI API — minimal subset of what @mariozechner/pi-coding-agent
@@ -47,6 +48,11 @@ export interface PiExtensionApi {
 	on(event: string, handler: PiEventHandler): void;
 	registerTool(tool: PiRegisteredTool): void;
 	registerCommand(name: string, config: PiRegisteredCommand): void;
+	exec: (
+		cmd: string,
+		args: string[],
+		opts?: { timeout?: number },
+	) => Promise<{ stdout: string; code: number }>;
 	cwd?: string;
 }
 
@@ -132,6 +138,15 @@ export default function fffExtension(pi: PiExtensionApi): void {
 	pi.on("session_start", async (_event, ctx) => {
 		const cwd = (ctx as { cwd?: string })?.cwd ?? pi.cwd ?? process.cwd();
 		await service.initialize(cwd);
+
+		// Check for extension updates
+		const updateInfo = await checkForUpdates(pi);
+		if (updateInfo?.updateAvailable) {
+			(ctx as { ui?: { notify?: (message: string, level?: string) => void } }).ui?.notify?.(
+				`📦 Update available: ${updateInfo.latestVersion} (you have ${updateInfo.currentVersion}). Run: pi install npm:@the-forge-flow/fff-pi`,
+				"info",
+			);
+		}
 	});
 
 	pi.on("session_shutdown", async () => {
