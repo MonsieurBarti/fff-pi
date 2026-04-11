@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.2...fff-pi-v0.1.3) (2026-04-11)
+
+
+### Features
+
+* add update notification for fff-pi extension ([6de693c](https://github.com/MonsieurBarti/fff-pi/commit/6de693ca90de9c273023bb73ef3b989d4a90425d))
+* add update notification for fff-pi extension ([5614602](https://github.com/MonsieurBarti/fff-pi/commit/5614602d343fc1a6c46873bd4fd4ae17b97d8047))
+
 ## [0.1.2](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.1...fff-pi-v0.1.2) (2026-04-11)
 
 
