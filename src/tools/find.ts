@@ -13,6 +13,7 @@ const FindParams = Type.Object({
 export function createFindTool(service: FffService): ToolDefinition<typeof FindParams> {
 	return {
 		name: "tff-fff_find",
+		readOnly: true,
 		label: "File Find",
 		description:
 			"Fuzzy find files by name or path. Typo-tolerant with frecency ranking and git-aware boosting. Use this instead of listing directories.",

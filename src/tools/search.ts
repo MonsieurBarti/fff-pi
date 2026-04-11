@@ -29,6 +29,7 @@ function formatGrepResults(results: GrepResult): string {
 export function createSearchTool(service: FffService): ToolDefinition<typeof SearchParams> {
 	return {
 		name: "tff-fff_search",
+		readOnly: true,
 		label: "Smart Search",
 		description:
 			"Smart search that auto-detects whether to find files or search contents. Use when unsure which search type to use.",
