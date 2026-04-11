@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.1...fff-pi-v0.1.2) (2026-04-11)
+
+
+### Features
+
+* add read-only classification to tool definitions ([9980d0b](https://github.com/MonsieurBarti/fff-pi/commit/9980d0b2e978c088682b1501a4d1729afb5ffeee))
+* add read-only classification to tool definitions ([999a480](https://github.com/MonsieurBarti/fff-pi/commit/999a4806e81b299a3ae02b0d559c119e11327248))
+
 ## [0.1.1](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.0...fff-pi-v0.1.1) (2026-04-10)
 
 
