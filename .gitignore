@@ -38,3 +38,4 @@ yarn-error.log*
 # Superpowers docs + plans
 docs/superpowers/
 docs/plans/
+.hippo/
