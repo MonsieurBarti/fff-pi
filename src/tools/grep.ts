@@ -27,6 +27,7 @@ const GrepParams = Type.Object({
 export function createGrepTool(service: FffService): ToolDefinition<typeof GrepParams> {
 	return {
 		name: "tff-fff_grep",
+		readOnly: true,
 		label: "Content Search",
 		description:
 			"Search file contents with smart case sensitivity, regex support, and multi-pattern OR logic. Results ranked by frecency.",
