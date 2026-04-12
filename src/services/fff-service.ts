@@ -40,7 +40,11 @@ export class FffService {
 	private cwd = "";
 	private lastGitRefresh = 0;
 
-	async initialize(cwd: string): Promise<void> {
+	async initialize(cwd: string, opts: { signal?: AbortSignal } = {}): Promise<void> {
+		if (opts.signal?.aborted) {
+			throw new DOMException("Aborted", "AbortError");
+		}
+
 		this.cwd = cwd;
 		this.config = loadConfig(cwd);
 
@@ -58,7 +62,35 @@ export class FffService {
 		}
 
 		this.finder = result.value;
-		await this.finder.waitForScan(10_000);
+
+		const signal = opts.signal;
+		if (!signal) {
+			await this.finder.waitForScan(10_000);
+			return;
+		}
+
+		const finder = this.finder;
+		let onAbort: (() => void) | undefined;
+		try {
+			await new Promise<void>((resolve, reject) => {
+				onAbort = () => {
+					reject(new DOMException("Aborted", "AbortError"));
+				};
+				signal.addEventListener("abort", onAbort, { once: true });
+				finder.waitForScan(10_000).then(
+					() => resolve(),
+					(err) => reject(err as Error),
+				);
+			});
+		} catch (err) {
+			if (this.finder && !this.finder.isDestroyed) {
+				this.finder.destroy();
+			}
+			this.finder = null;
+			throw err;
+		} finally {
+			if (onAbort) signal.removeEventListener("abort", onAbort);
+		}
 	}
 
 	async shutdown(): Promise<void> {
