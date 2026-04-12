@@ -1,5 +1,5 @@
-import type { FffService } from "../services/fff-service";
-import type { CommandDefinition } from "./types";
+import type { FffService } from "../services/fff-service.js";
+import type { CommandDefinition } from "./types.js";
 
 export function createReindexCommand(service: FffService): CommandDefinition {
 	return {

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 
-import { createRefreshGitHook } from "../../../src/hooks/refresh-git";
-import type { FffService } from "../../../src/services/fff-service";
+import { createRefreshGitHook } from "../../../src/hooks/refresh-git.js";
+import type { FffService } from "../../../src/services/fff-service.js";
 
 function createMockService(): FffService {
 	return {

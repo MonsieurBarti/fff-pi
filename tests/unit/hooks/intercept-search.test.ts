@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 
-import { createInterceptSearchHook } from "../../../src/hooks/intercept-search";
-import type { FffService } from "../../../src/services/fff-service";
+import { createInterceptSearchHook } from "../../../src/hooks/intercept-search.js";
+import type { FffService } from "../../../src/services/fff-service.js";
 
 function createMockService(): FffService {
 	return {

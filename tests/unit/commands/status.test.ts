@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from "vitest";
 
-import { createStatusCommand } from "../../../src/commands/status";
-import type { CommandContext } from "../../../src/commands/types";
-import type { FffService } from "../../../src/services/fff-service";
+import { createStatusCommand } from "../../../src/commands/status.js";
+import type { CommandContext } from "../../../src/commands/types.js";
+import type { FffService } from "../../../src/services/fff-service.js";
 
 function createMockService(): FffService {
 	return {

@@ -8,7 +8,7 @@ import {
 	createFakeGrepMatch,
 	createFakeGrepResult,
 	createFakeSearchResult,
-} from "../../fixtures/fake-fff-node";
+} from "../../fixtures/fake-fff-node.js";
 
 // Use vi.hoisted so fakeFileFinder is available inside the hoisted vi.mock factory
 const { fakeFileFinder } = vi.hoisted(() => {
@@ -49,7 +49,7 @@ vi.mock("@ff-labs/fff-node", () => ({
 	},
 }));
 
-import { FffService } from "../../../src/services/fff-service";
+import { FffService } from "../../../src/services/fff-service.js";
 
 describe("FffService.search auto-mode", () => {
 	let tmpCwd: string;

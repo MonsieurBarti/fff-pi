@@ -1,5 +1,5 @@
-import type { FffService } from "../services/fff-service";
-import type { HookDefinition } from "./index";
+import type { FffService } from "../services/fff-service.js";
+import type { HookDefinition } from "./index.js";
 
 export function createRefreshGitHook(service: FffService): HookDefinition {
 	return {

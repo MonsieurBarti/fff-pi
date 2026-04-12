@@ -1,8 +1,8 @@
 import { Type } from "@sinclair/typebox";
 
-import type { FffService } from "../services/fff-service";
-import type { FindResult, GrepResult } from "../types";
-import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types";
+import type { FffService } from "../services/fff-service.js";
+import type { FindResult, GrepResult } from "../types.js";
+import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types.js";
 
 const SearchParams = Type.Object({
 	query: Type.String({ description: "Natural language query or pattern" }),

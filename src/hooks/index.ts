@@ -1,7 +1,7 @@
-import type { FffService } from "../services/fff-service";
-import { createInterceptSearchHook } from "./intercept-search";
-import { createRefreshGitHook } from "./refresh-git";
-import { createTrackFrecencyHook } from "./track-frecency";
+import type { FffService } from "../services/fff-service.js";
+import { createInterceptSearchHook } from "./intercept-search.js";
+import { createRefreshGitHook } from "./refresh-git.js";
+import { createTrackFrecencyHook } from "./track-frecency.js";
 
 export interface HookDefinition {
 	event: string;

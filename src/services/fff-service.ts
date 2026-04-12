@@ -12,9 +12,9 @@ import type {
 	IndexStatus,
 	SearchOptions,
 	SearchResult,
-} from "../types";
-import { DEFAULT_CONFIG } from "../types";
-import { getFffDir, loadConfig } from "./config";
+} from "../types.js";
+import { DEFAULT_CONFIG } from "../types.js";
+import { getFffDir, loadConfig } from "./config.js";
 
 const FILE_EXTENSION_PATTERN = /\.\w{1,10}$/;
 const GLOB_CHARS = /[*?]/;

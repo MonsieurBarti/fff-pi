@@ -1,12 +1,12 @@
 import type { TObject } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
 
-import type { CommandContext, CommandDefinition } from "./commands";
-import { createAllCommands } from "./commands";
-import { createAllHooks } from "./hooks";
-import { FffService } from "./services/fff-service";
-import type { ToolDefinition } from "./tools";
-import { createAllTools } from "./tools";
+import type { CommandContext, CommandDefinition } from "./commands/index.js";
+import { createAllCommands } from "./commands/index.js";
+import { createAllHooks } from "./hooks/index.js";
+import { FffService } from "./services/fff-service.js";
+import type { ToolDefinition } from "./tools/index.js";
+import { createAllTools } from "./tools/index.js";
 import { checkForUpdates } from "./update-check.js";
 
 // ---------------------------------------------------------------------------
@@ -15,14 +15,14 @@ import { checkForUpdates } from "./update-check.js";
 // The default export (fffExtension) remains the canonical PI-extension entry.
 // ---------------------------------------------------------------------------
 
-export { FffService, detectSearchMode } from "./services/fff-service";
-export { createAllTools } from "./tools";
-export { createAllCommands } from "./commands";
-export { createAllHooks } from "./hooks";
+export { FffService, detectSearchMode } from "./services/fff-service.js";
+export { createAllTools } from "./tools/index.js";
+export { createAllCommands } from "./commands/index.js";
+export { createAllHooks } from "./hooks/index.js";
 
-export type { ToolDefinition } from "./tools";
-export type { CommandDefinition, CommandContext } from "./commands";
-export type { HookDefinition } from "./hooks";
+export type { ToolDefinition } from "./tools/index.js";
+export type { CommandDefinition, CommandContext } from "./commands/index.js";
+export type { HookDefinition } from "./hooks/index.js";
 export type {
 	FindOptions,
 	FindResult,
@@ -35,7 +35,7 @@ export type {
 	SearchMode,
 	IndexStatus,
 	FffConfig,
-} from "./types";
+} from "./types.js";
 
 // ---------------------------------------------------------------------------
 // Structural PI API — minimal subset of what @mariozechner/pi-coding-agent

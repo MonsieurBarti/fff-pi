@@ -42,7 +42,7 @@ vi.mock("@ff-labs/fff-node", () => ({
 	},
 }));
 
-import { FffService } from "../../../src/services/fff-service";
+import { FffService } from "../../../src/services/fff-service.js";
 
 describe("FffService lifecycle", () => {
 	let tmpCwd: string;

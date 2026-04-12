@@ -1,8 +1,8 @@
 import { Value } from "@sinclair/typebox/value";
 import { describe, expect, test, vi } from "vitest";
 
-import type { FffService } from "../../../src/services/fff-service";
-import { createGrepTool } from "../../../src/tools/grep";
+import type { FffService } from "../../../src/services/fff-service.js";
+import { createGrepTool } from "../../../src/tools/grep.js";
 
 function createMockService(): FffService {
 	return {

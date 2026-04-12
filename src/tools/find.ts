@@ -1,7 +1,7 @@
 import { Type } from "@sinclair/typebox";
 
-import type { FffService } from "../services/fff-service";
-import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types";
+import type { FffService } from "../services/fff-service.js";
+import type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types.js";
 
 const FindParams = Type.Object({
 	query: Type.String({ description: "Fuzzy search query for file names/paths" }),
