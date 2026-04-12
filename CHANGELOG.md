@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.4](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.3...fff-pi-v0.1.4) (2026-04-12)
+
+
+### Features
+
+* add abortsignal support to fff-service initialize ([f882338](https://github.com/MonsieurBarti/fff-pi/commit/f882338c94da61c700e19e61784cf72956d469e5))
+* add library-style named exports for fff-service and factories ([dc0e56b](https://github.com/MonsieurBarti/fff-pi/commit/dc0e56b9f5d58c8f353d07cad020440dbba0eccb))
+* expose library-style API for use by other PI extensions ([724a599](https://github.com/MonsieurBarti/fff-pi/commit/724a599cacad1c73e60295c4088014d644ffff0d))
+* re-export hook-definition type for parity ([35caf5e](https://github.com/MonsieurBarti/fff-pi/commit/35caf5e79c766bed123b23cd174e8d6cf6779e4d))
+
 ## [0.1.3](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.2...fff-pi-v0.1.3) (2026-04-11)
 
 
