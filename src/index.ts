@@ -10,6 +10,33 @@ import { createAllTools } from "./tools";
 import { checkForUpdates } from "./update-check.js";
 
 // ---------------------------------------------------------------------------
+// Library-style named exports. Let other PI extensions (e.g. TFF) import
+// FffService and factories directly instead of spawning a child `pi` process.
+// The default export (fffExtension) remains the canonical PI-extension entry.
+// ---------------------------------------------------------------------------
+
+export { FffService, detectSearchMode } from "./services/fff-service";
+export { createAllTools } from "./tools";
+export { createAllCommands } from "./commands";
+export { createAllHooks } from "./hooks";
+
+export type { ToolDefinition } from "./tools";
+export type { CommandDefinition, CommandContext } from "./commands";
+export type {
+	FindOptions,
+	FindResult,
+	FindResultItem,
+	GrepOptions,
+	GrepResult,
+	GrepResultItem,
+	SearchOptions,
+	SearchResult,
+	SearchMode,
+	IndexStatus,
+	FffConfig,
+} from "./types";
+
+// ---------------------------------------------------------------------------
 // Structural PI API — minimal subset of what @mariozechner/pi-coding-agent
 // exposes at runtime. We deliberately avoid importing the real type so this
 // package can be imported and unit-tested without the peer dep installed.
