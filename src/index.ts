@@ -22,6 +22,7 @@ export { createAllHooks } from "./hooks";
 
 export type { ToolDefinition } from "./tools";
 export type { CommandDefinition, CommandContext } from "./commands";
+export type { HookDefinition } from "./hooks";
 export type {
 	FindOptions,
 	FindResult,
