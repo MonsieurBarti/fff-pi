@@ -38,4 +38,13 @@ describe("FffService.initialize() abort support", () => {
 		await expect(service.initialize(tmpCwd, { signal: ctrl.signal })).resolves.toBeUndefined();
 		await service.shutdown();
 	});
+
+	it("rejects with AbortError when signal aborts mid-scan and cleans up", async () => {
+		const service = new FffService();
+		const ctrl = new AbortController();
+		const promise = service.initialize(tmpCwd, { signal: ctrl.signal });
+		ctrl.abort();
+		await expect(promise).rejects.toMatchObject({ name: "AbortError" });
+		expect(service.getStatus().initialized).toBe(false);
+	});
 });
