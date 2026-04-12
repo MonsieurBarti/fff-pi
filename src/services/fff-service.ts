@@ -79,7 +79,7 @@ export class FffService {
 				signal.addEventListener("abort", onAbort, { once: true });
 				finder.waitForScan(10_000).then(
 					() => resolve(),
-					(err) => reject(err as Error),
+					(err) => reject(err),
 				);
 			});
 		} catch (err) {
