@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.4...fff-pi-v0.1.5) (2026-04-12)
+
+
+### Bug Fixes
+
+* use explicit .js suffixes on relative imports (esm compliance) ([79b4d0a](https://github.com/MonsieurBarti/fff-pi/commit/79b4d0ac902262962d84e1905c8a65856f90eb53))
+* use explicit .js suffixes on relative imports (esm compliance) ([9464cb6](https://github.com/MonsieurBarti/fff-pi/commit/9464cb661fa33eeff52e729b96557a7b2582e7b1))
+
 ## [0.1.4](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.3...fff-pi-v0.1.4) (2026-04-12)
 
 
