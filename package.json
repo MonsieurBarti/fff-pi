@@ -1,6 +1,6 @@
 {
 	"name": "@the-forge-flow/fff-pi",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "PI extension for fff",
 	"type": "module",
 	"main": "./dist/index.js",
