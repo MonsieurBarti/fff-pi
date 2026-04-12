@@ -108,6 +108,51 @@ describe("FffService lifecycle", () => {
 		const status = service.getStatus();
 		expect(status.initialized).toBe(false);
 	});
+
+	test("getStatus returns degraded status when healthCheck fails", async () => {
+		await service.initialize(tmpCwd);
+		fakeFileFinder.healthCheck.mockReturnValueOnce({ ok: false, error: "boom" });
+		const status = service.getStatus();
+		expect(status.initialized).toBe(true);
+		expect(status.indexedFiles).toBe(0);
+		expect(status.gitAvailable).toBe(false);
+	});
+
+	test("reindex triggers a fresh scan", async () => {
+		await service.initialize(tmpCwd);
+		await service.reindex();
+		expect(fakeFileFinder.scanFiles).toHaveBeenCalled();
+	});
+
+	test("reindex throws if scanFiles fails", async () => {
+		await service.initialize(tmpCwd);
+		fakeFileFinder.scanFiles.mockReturnValueOnce({ ok: false, error: "scan boom" });
+		await expect(service.reindex()).rejects.toThrow("scan boom");
+	});
+
+	test("trackFileAccess forwards to finder.trackQuery", async () => {
+		await service.initialize(tmpCwd);
+		service.trackFileAccess("q", "a.ts");
+		expect(fakeFileFinder.trackQuery).toHaveBeenCalledWith("q", "a.ts");
+	});
+
+	test("trackFileAccess is a no-op before initialize", () => {
+		service.trackFileAccess("q", "a.ts");
+		expect(fakeFileFinder.trackQuery).not.toHaveBeenCalled();
+	});
+
+	test("refreshGitIfStale refreshes once and then respects interval", async () => {
+		await service.initialize(tmpCwd);
+		service.refreshGitIfStale();
+		expect(fakeFileFinder.refreshGitStatus).toHaveBeenCalledTimes(1);
+		service.refreshGitIfStale();
+		expect(fakeFileFinder.refreshGitStatus).toHaveBeenCalledTimes(1);
+	});
+
+	test("refreshGitIfStale is a no-op before initialize", () => {
+		service.refreshGitIfStale();
+		expect(fakeFileFinder.refreshGitStatus).not.toHaveBeenCalled();
+	});
 });
 
 describe("FffService.find", () => {
