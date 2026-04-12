@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 
-import { createTrackFrecencyHook } from "../../../src/hooks/track-frecency";
-import type { FffService } from "../../../src/services/fff-service";
+import { createTrackFrecencyHook } from "../../../src/hooks/track-frecency.js";
+import type { FffService } from "../../../src/services/fff-service.js";
 
 function createMockService(): FffService {
 	return {

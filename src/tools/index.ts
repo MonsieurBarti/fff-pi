@@ -1,10 +1,10 @@
-import type { FffService } from "../services/fff-service";
-import { createFindTool } from "./find";
-import { createGrepTool } from "./grep";
-import { createSearchTool } from "./search";
-import type { ToolDefinition } from "./types";
+import type { FffService } from "../services/fff-service.js";
+import { createFindTool } from "./find.js";
+import { createGrepTool } from "./grep.js";
+import { createSearchTool } from "./search.js";
+import type { ToolDefinition } from "./types.js";
 
-export type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types";
+export type { ToolDefinition, ToolDetailValue, ToolExecuteResult } from "./types.js";
 
 export function createAllTools(service: FffService): ToolDefinition[] {
 	return [createFindTool(service), createGrepTool(service), createSearchTool(service)];

@@ -42,7 +42,7 @@ vi.mock("@ff-labs/fff-node", () => ({
 	},
 }));
 
-import fffExtension, { type PiExtensionApi } from "../../src/index";
+import fffExtension, { type PiExtensionApi } from "../../src/index.js";
 
 interface RegisteredTool {
 	name: string;

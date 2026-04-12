@@ -3,8 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import { loadConfig } from "../../../src/services/config";
-import { DEFAULT_CONFIG } from "../../../src/types";
+import { loadConfig } from "../../../src/services/config.js";
+import { DEFAULT_CONFIG } from "../../../src/types.js";
 
 describe("loadConfig", () => {
 	let tmpCwd: string;

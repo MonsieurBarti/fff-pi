@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { DEFAULT_CONFIG, type FffConfig } from "../types";
+import { DEFAULT_CONFIG, type FffConfig } from "../types.js";
 
 const FORBIDDEN_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 

@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from "vitest";
 
-import { createReindexCommand } from "../../../src/commands/reindex";
-import type { CommandContext } from "../../../src/commands/types";
-import type { FffService } from "../../../src/services/fff-service";
+import { createReindexCommand } from "../../../src/commands/reindex.js";
+import type { CommandContext } from "../../../src/commands/types.js";
+import type { FffService } from "../../../src/services/fff-service.js";
 
 function createMockService(): FffService {
 	return {

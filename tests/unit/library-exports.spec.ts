@@ -5,7 +5,7 @@ import fffExtension, {
 	createAllCommands,
 	createAllHooks,
 	createAllTools,
-} from "../../src";
+} from "../../src/index.js";
 
 describe("fff-pi library exports", () => {
 	it("exports FffService as a constructable class with expected methods", () => {
