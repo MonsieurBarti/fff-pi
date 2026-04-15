@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.6](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.5...fff-pi-v0.1.6) (2026-04-15)
+
+
+### Features
+
+* make update checks non-blocking ([de5f813](https://github.com/MonsieurBarti/fff-pi/commit/de5f81392fc9aaf32773718b13906f7638388889))
+* make update checks non-blocking ([966fb4b](https://github.com/MonsieurBarti/fff-pi/commit/966fb4bbfc91d4a32057eacee8fb5ebfd42b354c))
+
 ## [0.1.5](https://github.com/MonsieurBarti/fff-pi/compare/fff-pi-v0.1.4...fff-pi-v0.1.5) (2026-04-12)
 
 
