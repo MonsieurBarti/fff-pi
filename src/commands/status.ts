@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 import type { FffService } from "../services/fff-service.js";
 import type { CommandDefinition } from "./types.js";
 
@@ -9,17 +10,27 @@ export function createStatusCommand(service: FffService): CommandDefinition {
 			const status = service.getStatus();
 
 			if (!status.initialized) {
-				ctx.ui.notify("fff: not initialized", "warning");
+				ctx.ui.notify(t("status.notInitialized", "fff: not initialized"), "warning");
 				return;
 			}
 
+			const yes = t("value.yes", "yes");
+			const no = t("value.no", "no");
+			const enabled = t("value.enabled", "enabled");
+			const disabled = t("value.disabled", "disabled");
+			const gitState = status.gitAvailable
+				? status.gitRepositoryFound
+					? t("value.repoFound", "repo found")
+					: t("value.availableNoRepo", "available, no repo")
+				: t("value.unavailable", "unavailable");
+
 			const lines = [
-				`fff v${status.version}`,
-				`Indexed: ${status.indexedFiles} files`,
-				`Path: ${status.basePath}`,
-				`Scanning: ${status.isScanning ? "yes" : "no"}`,
-				`frecency: ${status.frecencyEnabled ? "enabled" : "disabled"}`,
-				`git: ${status.gitAvailable ? (status.gitRepositoryFound ? "repo found" : "available, no repo") : "unavailable"}`,
+				t("status.version", "fff v{version}", { version: status.version }),
+				t("status.indexed", "Indexed: {count} files", { count: status.indexedFiles }),
+				t("status.path", "Path: {path}", { path: status.basePath }),
+				t("status.scanning", "Scanning: {value}", { value: status.isScanning ? yes : no }),
+				t("status.frecency", "frecency: {value}", { value: status.frecencyEnabled ? enabled : disabled }),
+				t("status.git", "git: {value}", { value: gitState }),
 			];
 
 			ctx.ui.notify(lines.join("\n"), "info");

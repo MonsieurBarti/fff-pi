@@ -4,6 +4,7 @@ import { Value } from "@sinclair/typebox/value";
 import type { CommandContext, CommandDefinition } from "./commands/index.js";
 import { createAllCommands } from "./commands/index.js";
 import { createAllHooks } from "./hooks/index.js";
+import { initI18n } from "./i18n.js";
 import { FffService } from "./services/fff-service.js";
 import type { ToolDefinition } from "./tools/index.js";
 import { createAllTools } from "./tools/index.js";
@@ -73,6 +74,7 @@ interface PiCommandContext {
 }
 
 export interface PiExtensionApi {
+	events?: { emit?: (name: string, payload: unknown) => void };
 	on(event: string, handler: PiEventHandler): void;
 	registerTool(tool: PiRegisteredTool): void;
 	registerCommand(name: string, config: PiRegisteredCommand): void;
@@ -147,6 +149,7 @@ function wrapCommand(def: CommandDefinition): PiRegisteredCommand {
 // ---------------------------------------------------------------------------
 
 export default function fffExtension(pi: PiExtensionApi): void {
+	initI18n(pi);
 	const service = new FffService();
 
 	// Register all tools + commands.
